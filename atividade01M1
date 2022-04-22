@@ -1,0 +1,332 @@
+##########################################################################################################################
+#	
+#	Disciplina: Arquitetura e Organização de Processadores
+# Atividade: Avaliação 01 – Programação em Linguagem de Montagem
+#	Exercício 01
+#	Alunos: Leonardo Borges e William De Souza...
+#
+##########################################################################################################################
+
+
+#	 + Exercício 01
+
+#	 - Usando a instrução ecall, implemente um programa que: -
+#	 (1) solicite ao usuário que forneça dois números inteiros (X e Y);
+#	 (2) realize a soma desses dois valores;
+#	 (3) apresente o resultado da soma.
+
+		.data					# Diretiva dos dados onde são declarado os dados/ variaveis 
+	
+	# Declaração das variaveis Exercicio 01		
+	valorX: .asciz "Entre com o valor de X: "	# Declara variavel valorX e coloca menssagem 'Entre com valor de X' 
+	valorY: .asciz "Entre com o valor de Y: "	# Declara variavel valorY e coloca menssagem 'Entre com valor de Y' 
+	total: .asciz "A soma de X e Y é igual a: "	# Declara variavel total e coloca menssagem 'A soma de X e Y é igual a:'
+
+	# Declaração das variaveis Exercicio 02
+	contador: .asciz "\nContador: " 			# Declara variavel contador e coloca menssagem 'Contador:'
+	contadorEspaco: .asciz " "			# Declara variavel contadorEspaco e coloca menssagem ' '
+	
+	# Declaração das variaveis Exercicio 03
+	menssagemLeituraVetor: .asciz "\nLEITURA DOS ELEMENTOS DO VETOR: " # Declara variavel menssagemVetor e coloca menssagem 'LEITURA DOS ELEMENTOS DO VETOR:'
+	vetor: .word 	0,0,0,0,0,0,0,0			# Declara variavel vetor
+	digiteElemento: .asciz "\nEntre com A["		# Declara variavel digiteElemento e coloca menssagem 'Entre com A['
+	posElemento: .asciz "]"    			# Declara variavel posElemento e coloca menssagem ']'
+	
+	apresentaVetor: .asciz "\nAPRESENTAÇÃO DO VETOR LIDO: " # Declara variavel menssagemVetor e coloca menssagem 'APRESENTAÇÃO DO VETOR LIDO:'
+	imprimeInicio: .asciz "\nA["			# Declara variavel digiteElemento e coloca menssagem 'A['
+	imprimeFim: .asciz "] = "			# Declara variavel digiteElemento e coloca menssagem '] = '
+	
+	
+	
+		.text					# Diretiva de instruções do programa onde e declarada as instruções
+	
+main:
+	# Imprime menssagem para digitação do valor de X		
+			# --Imprime menssagem na tela--
+	li a7, 4	# Carrega serviço n° 4	imprime string na tela
+	la a0, valorX	# Carrega ptr p / valorX a0 = valorX
+	ecall		# Chama o serviço
+	
+	# Captura valor da tela system
+			# -- Lé um int informado pelo usuário--
+	li a7, 5	# Carrega serviço n° 5	lê valor inteiro digitado
+	ecall		# Chama o serviço
+	
+	# Move para variavel temporaria valor de entrada
+	mv t1, a0	# Carrega/ move o retorno de a0 em t1 t1 = a0
+	
+	# Imprime menssagem para leitura do valor de Y		
+			# --Imprime menssagem na tela--
+	li a7, 4	# Carrega serviço n° 4 Imprime string
+	la a0, valorY	# Carrega ptr p / valorY a0 = valorY
+	ecall		# Chama o serviço
+	
+	# Captura valor da tela 
+			# -- Lé um int informado pelo usuário--
+	li a7, 5	# Carrega serviço n° 5 / captura int 
+	ecall		# Chama o serviço
+	
+	# Move para variavel temporaria valor de entrada
+	mv t2, a0	# Carrega/ move o retorno de a0 em t2 t2 = a0
+	
+	# Soma os valores de t1 + t2
+	add t2, t1, t2 	# Soma os dois valores t2 = t1 + t2
+	
+	# Imprime valor total da soma na tela
+			# --Imprime menssagem na tela--
+	li a7, 4	# Carrega serviço n° 4 / imprime string
+	la a0, total	# Carrega ptr p / total ao = total
+	ecall		# Chama o serviço
+	
+	# Imprime valor da tela
+			# --Imprime valor na tela--
+	li a7, 1	# Carrega serviço n° 1 / imprimir inteiro
+	mv a0, t2	# Carrega/ move valor t2 para a0 a0 = t2
+	ecall		# Chama o serviço
+	
+	#	Em liguagem alto nivel em C
+	
+	#	include <stdio.h>
+	#	include <stdlib.h>
+	
+	#	int main (void){
+  	#	
+  	#		// Declaração de variáveis do tipo inteiro
+  	#		int X, Y, total;
+  
+  	#		// Imprime mensagem digite valor de X
+  	#		printf("Digite valor de X: ");
+  	
+  	#		// Recebe um inteiro e armazena na variável X
+  	#		scanf("%d", &X); 
+  
+  	#		//recebe um inteiro e armazena na variável Y
+  	#		printf("Digite valor de Y: ");
+  	#		scanf("%d", &Y); 
+  	
+  	#		// Efetua adição de X + Y e armazena na variável total
+  	#		total = X + Y;
+  	
+  	#		// Mostra mensagem com o resultado
+  	#		printf("A soma de X e Y é igual a: %d\n", total); 
+  
+  	#		system ("pause");
+  	#		return(0);
+	#	}
+
+##########################################################################################################################
+
+#	+ Exercício 02
+
+#	(1) Implemente um laço de repetição do tipo for que conte de 0 a 9 e imprima o valor de contagem no console
+	
+
+
+      	.text   	    	# Diretiva de instruções do programa onde e declarada as instruções
+
+				# Laço de repetição for em assembly / iimprime um contador 0 até 9
+       addi s0, zero, 0     	# i=0
+Loop:  slti t0, s0, 9       	# se i<9 então $t0=1 senão $t0=0
+       beq  t0, zero, Exit  	# se t0=0 então goto Exit
+       addi s0, s0, 1       	# i++ (do laço for)
+       
+              	# Imprime menssagem para criar um espaço		
+				# --Imprime espaço na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, contadorEspaco	# Carrega ptr p / contadorEspaco = " "
+	ecall			# Chama o serviço
+       
+       		# Imprime menssagem do contador		
+				# --Imprime menssagem na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, contador		# Carrega ptr p / contador
+	ecall			# Chama o serviço
+       
+              	# Imprime valor de i na tela
+				# --Imprime valor na tela--
+	li a7, 1		# Carrega serviço n° 1 / imprimir inteiro
+	mv a0, s0		# Carrega/ move valor s0 para a0/ a0 = s0
+	ecall			# Chama o serviço
+       
+       j    Loop                # goto Loop
+
+Exit:  nop
+
+	# Em linguagem alto nivel C
+
+		#include <stdio.h>
+		#include <conio.h>
+		
+	# int main(void){
+
+  	#	for(i = 0; i < 9; i++){
+  	#		printf("Contador: ", "%d ", i);
+  	#	}
+  	#	return(0);
+	# }
+
+#########################################################################################################################
+
+#	+ Exercicio 03
+
+#	(1) Implemente um programa que declare um vetor de inteiros com 8 elementos, 
+#	(2) solicite ao usuário a entrada dos elementos do vetor e, após a leitura dos 8 elementos, 
+#	(3) apresente o valor de cada elemento, em mensagens.
+			
+			
+	              	# Imprime menssagem para criar um espaço		
+				# --Imprime espaço na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, contadorEspaco	# Carrega ptr p / contadorEspaco = " "
+	ecall			# Chama o serviço		
+	
+			# Imprime menssagem para digitação do valores de LEITURA DOS ELEMENTOS DO VETOR:		
+					# --Imprime menssagem na tela--
+	li a7, 4			# Carrega serviço n° 4	imprime string na tela
+	la a0, menssagemLeituraVetor	# Carrega ptr p / menssagemLeituraVetor a0 = menssagemLeituraVetor
+	ecall				# Chama o serviço
+
+
+	la s3, vetor  # Inicializa o array/ vetor com endereço base em s3
+	
+			# Laço de repetição for em assembly / preenche array 
+       addi s0, zero, 0     	# i=0
+Loop2: slti t0, s0, 8       	# se i<8 então $t0=1 senão $t0=0
+       beq  t0, zero, Exit2  	# se t0=0 então goto Exit
+       addi s0, s0, 1       	# i++ (do laço for)
+       
+              		# Imprime menssagem para criar um espaço		
+				# --Imprime espaço na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, contadorEspaco	# Carrega ptr p / contadorEspaco = " "
+	ecall			# Chama o serviço
+       
+       			# Imprime menssagem do array		
+				# --Imprime menssagem na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, digiteElemento	# Carrega ptr p / 
+	ecall			# Chama o serviço
+       
+              		# Imprime valor de i na tela
+				# --Imprime valor de i na tela--
+	li a7, 1		# Carrega serviço n° 1 / imprimir inteiro
+	mv a0, s0		# Carrega/ move valor s0 para a0 a0 = s0
+	ecall			# Chama o serviço
+       
+              		# Imprime menssagem do array pos elemento	
+				# --Imprime menssagem na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, posElemento	# Carrega ptr p / posElemento = ']'
+	ecall			# Chama o serviço
+       
+       ###############################################################################
+       # AQUIIIIII  Salva o elemento que vai entrar no array[i]/  array[i] = element #
+       # 	
+       								   
+       	# Move para variavel temporaria valor de entrada
+	mv t2, a0	# Carrega/ move o retorno de a0 em t2 t2 = a0
+	
+	add t1, t0, t0 # t1 = 2.i
+	add t1, t1, t1 # t1 = 4.i
+	add t1, t1, s3 # t1 = endereço base + endereço relativo, tornando endereço absoluto
+	lw t3, 0(t1)   # inicializa t3 com endereço absoluto	##########						   
+       								   
+       # Captura valor da tela 
+			# -- Lé um int informado pelo usuário--
+	li a7, 5	# Carrega serviço n° 5 / captura int 
+	ecall		# Chama o serviço
+	
+
+	addi t3, a7, 0  # Valor de entrada e passado para t3, t3 = valor digitado
+	sw t3, 0(t1)    # Salva valor na memoria no vetor[i], vetor[i] = t3
+	
+	#  
+	# AQUIIIIII  Salva o elemento que vai entrar no array[i]/  array[i] = element
+       ##############################################################################
+       
+        j    Loop2               # goto Loop
+
+Exit2:  nop
+	
+			# Imprime o array/ vetor
+			
+	              	# Imprime menssagem para Imprimir vetor/ array		
+				# --Imprime espaço na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, apresentaVetor	# Carrega ptr p / "apresentaVetor"
+	ecall			# Chama o serviço
+			
+        la s7, vetor    # Inicializa o array/ vetor com endereço base em s3
+
+
+			# Laço de repetição for em assembly / preenche array 
+       li s0, 0     	# i=0
+Loop3: slti t0, s0, 8       	# se i<8 então $t0=1 senão $t0=0
+       beq  t0, zero, Exit3  	# se t0=0 então goto Exit
+
+       
+              		# Imprime menssagem para criar um espaço		
+				# --Imprime espaço na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, contadorEspaco	# Carrega ptr p / contadorEspaco = " "
+	ecall			# Chama o serviço
+       
+	              	# Imprime menssagem para Imprimir vetor/ array	imprimeInicio	
+				# --Imprime espaço na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, imprimeInicio	# Carrega ptr p / "imprimeInicio"
+	ecall			# Chama o serviço
+       
+              		# Imprime valor de i na tela
+				# --Imprime valor de i na tela--
+	li a7, 1		# Carrega serviço n° 1 / imprimir inteiro
+	mv a0, s0		# Carrega/ move valor s0 para a0 a0 = s0
+	ecall			# Chama o serviço
+       
+              		# Imprime menssagem do array pos elemento	
+				# --Imprime menssagem na tela--
+	li a7, 4		# Carrega serviço n° 4 Imprime string
+	la a0, imprimeFim	# Carrega ptr p / posElemento = ']'
+	ecall			# Chama o serviço
+
+       								   
+       		# Move para variavel temporaria valor de entrada
+	#mv t3, a0      # Carrega/ move o retorno de a0 em t3. t3 = a0
+	
+	add t1, s0, s0 # t1 = 2.i
+	add t1, t1, t1 # t1 = 4.i
+	add t1, t1, s3 # t1 = endereço base + endereço relativo, tornando t1 em endereço absoluto
+	lw t3, 0(t1)   # busca elenento com endereço absoluto e salva em t3						   
+       						
+       	               # Imprime valor de A[i] na tela
+				# --Imprime valor de A[i] na tela--
+	li a7, 1		# Carrega serviço n° 1 / imprimir inteiro
+	mv a0, t3		# Carrega/ move valor t3 para a0. a0 = t3
+	ecall			# Chama o serviço
+								 
+	addi s0, s0, 1       	# i++ (do laço for)							   		     		   
+        j    Loop3              # goto Loop
+
+Exit3:  nop
+	
+	# Em linguagem alto nivel C
+
+		#include <stdio.h>
+		#include <conio.h>
+		
+	# int main(void){
+	#	int vetor[] = {0,0,0,0,0,0,0,0};
+  	#	for(i = 0; i < 8; i++){
+  	#		printf("Entre com A[", "%d ", i,"]");
+  	#		scanf("%d", &vetor[i]);
+  	#	}
+  	#	for(i = 0; i < 8; i++){
+  	#		printf("A[", "%d ", i,"] = ", "%d ", vetor[i]);
+  	#	}
+  	#	return(0);
+	# }
+
+
+
+
+
