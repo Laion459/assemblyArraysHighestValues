@@ -1,0 +1,172 @@
+####################################################################
+#
+# Disciplina: Arquitetura e Organização de Processadores #
+# Atividade: Avaliação 02 – Programação em Linguagem de Montagem #
+# Atividade 02 #
+# Alunos: Leonardo Borges e Willian de Souza
+#
+####################################################################
+
+		.data
+		
+	read_array_length_message: .asciz "Enter array length(max: 8): " #Declare message from read array length
+	array_index_out_of_range: .asciz "Array length should be between 1 and 8" #declare message for array index out of index
+	array_a: .word 0,0,0,0,0,0,0,0 #Declare array for first read input
+	array_b: .word 0,0,0,0,0,0,0,0 #Declare array for second read input
+	array_c: .word 0,0,0,0,0,0,0,0 #Declare array for store bigger values from comparison between array_a en array_b
+	read_array_a_message: .asciz "Enter array_a[" #Declare string to read array_a
+	read_array_b_message: .asciz "Enter array_b[" #Declare string to read array_a
+	show_array_c_message: .asciz "Show array_c[" #Declare string to read array_a
+	post_read_array: .asciz "]: " #Declare string to close read array string
+	empty_space: .asciz " \n" #Declare string to empty space
+	
+		.text
+	
+main:
+	li s1, 1 # Define min length of array (1)
+	li s2, 9 # Define max length of array (9)
+	
+	# Show read arrays length string
+	li a7, 4 # Load "printf" ecall
+	la a0, read_array_length_message # Load ptr from read_array_length_message to a0 register
+	ecall # Do ecall
+	
+	li a7, 5 # Load "scanf" ecall
+	ecall # Do ecall
+
+	mv s0, a0 # array_length = a0 (result from input)
+	blt s0, s1, abort_index_out_of_range # if array_length(s0) < s1(1) goto abort_index_out_of_range
+	bge s0, s2, abort_index_out_of_range # if array_length(s0) >= s2(9) goto abort_index_out_of_range
+	li t1, 0 # i=0
+	la s1, array_a # Load base address to array_a in s1
+read_array_a_loop:
+
+	bge t1, s0, read_array_b # if i(t1) > array_length(s0) goto exit
+
+	# Show first piece of read i message
+	li a7, 4 # Load "printf" ecall
+	la a0, read_array_a_message # Load ptr from read_array_a_message to a0 register
+	ecall # Do ecall
+	
+	# Show index
+	li a7, 1 # Load "printf" ecall
+	mv a0, t1 # Load ptr from read_array_a_message to a0 register
+	ecall # Do ecall
+
+	# Show last piece of read i message
+	li a7, 4 # Load "printf" ecall
+	la a0, post_read_array # Load ptr from post_read_array to a0 register
+	ecall # Do ecall
+	
+	li a7, 5 # Load "scanf" ecall
+	ecall # Do ecall
+	mv t2, a0 # int aux(t2) = a0
+	add t3, t1, t1 # t3 = 2.i
+	add t3, t3, t3 # t3 = 4.i
+	add t3, t3, s1 # t3 = base address + relative address = absolute address
+
+	sw t2, 0(t3) # array[i] = t2
+	addi t1, t1, 1 # i = i + 1
+j read_array_a_loop
+
+read_array_b:
+	li t1, 0 # i=0
+	la s1, array_b # Load base address to array_a in s1
+
+read_array_b_loop:
+	bge t1, s0, combine_arrays # if i(t1) > array_length(s0) goto exit
+
+	# Show first piece of read i message
+	li a7, 4 # Load "printf" ecall
+	la a0, read_array_b_message # Load ptr from read_array_a_message to a0 register
+	ecall # Do ecall
+
+	# Show index
+	li a7, 1 # Load "printf" ecall
+	mv a0, t1 # Load ptr from read_array_a_message to a0 register
+	ecall # Do ecall
+
+	# Show last piece of read i messafe
+	li a7, 4 # Load "printf" ecall
+	la a0, post_read_array # Load ptr from post_read_array to a0 register
+	ecall # Do ecall
+	li a7, 5 # Load "scanf" ecall
+	ecall # Do ecall
+
+	mv t2, a0 # int aux(t2) = a0
+	add t3, t1, t1 # t3 = 2.i
+	add t3, t3, t3 # t3 = 4.i
+	add t3, t3, s1 # t3 = base address + relative address = absolute address
+	sw t2, 0(t3) # array[i] = t2
+	addi t1, t1, 1 # i = i + 1
+j read_array_b_loop
+	
+	combine_arrays:
+	li t1, 0 # i=0
+	la s1, array_a # Load base address to array_a in s1
+	la s2, array_b # Load base address to array_b in s2
+	la s3, array_c # Load base address to array_c in s3
+combine_arrays_loop:
+
+	bge t1, s0, show_array_c # if i(t1) > array_length(s0) goto exit
+	add t3, t1, t1 # t3 = 2.i
+	add t3, t3, t3 # t3 = 4.i
+	add t4, t3, s1 # t4(array_a) = base address + relative address = absolute address
+	add t5, t3, s2 # t5(array_b) = base address + relative address = absolute addres
+	add t6, t3, s3 # t6(array_c) = base address + relative address = absolute addres
+	lw t4, 0(t4) # t4 = load from t4 address
+	lw t5, 0(t5) # t5 = load from t5 address
+	blt t4, t5, store_t5 # if (t4 < t5) goto combine_continue
+	sw t4, 0(t6) # store t4 on t6(array_c[i])
+j combine_continue # goto combine_continue
+
+store_t5:
+	sw t5, 0(t6) # store t5 on t6(array_c[i])
+
+combine_continue:
+
+	addi t1, t1, 1 # i = i + 1
+j combine_arrays_loop
+
+show_array_c:
+	li t1, 0 # i=0
+	show_array_c_loop:
+
+	bge t1, s0, exit # if i(t1) > array_length(s0) goto exit
+	add t3, t1, t1 # t3 = 2.i
+	add t3, t3, t3 # t3 = 4.i
+	add t4, t3, s3 # t4(array_c) = base address + relative address = absolute address
+	lw t4, 0(t4) # t4 = load from t4 address
+	
+	# Show first piece of read i message
+	li a7, 4 # Load "printf" ecall
+	la a0, show_array_c_message # Load ptr from show_array_c_message to a0 register
+	ecall # Do ecall
+
+	# Show index
+	li a7, 1 # Load "printf" ecall
+	mv a0, t1 # Load ptr from read_array_a_message to a0 register
+	ecall # Do ecall
+
+	# Show last piece of read i messafe
+	li a7, 4 # Load "printf" ecall
+	la a0, post_read_array # Load ptr from post_read_array to a0 register
+	ecall # Do ecall
+
+	# Show value
+	li a7, 1 # Load "printf" ecall
+	mv a0, t4 # Load ptr from read_array_a_message to a0 register
+	ecall # Do ecall
+
+	# Show empty space
+	li a7, 4 # Load "printf" ecall
+	la a0, empty_space # Load ptr from empty_space to a0 register
+	ecall # Do ecall
+	addi t1, t1, 1 # i = i + 1
+j show_array_c_loop
+
+abort_index_out_of_range: # Show message for index out of range
+	li a7, 4 # Load "printf" ecall
+	la a0, array_index_out_of_range # Load ptr from array_index_out_of_range to a0 register
+	ecall # Do ecall
+exit: nop
